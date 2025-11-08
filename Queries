@@ -1,0 +1,65 @@
+use nihal;
+
+drop table if exists Sales;
+
+-- Create Sales table
+CREATE TABLE Sales (
+ sale_id INT PRIMARY KEY,
+ product_id INT,
+ quantity_sold INT,
+ sale_date DATE,
+ total_price DECIMAL(10, 2),
+ FOREIGN KEY (product_id) REFERENCES Products(product_id)
+);
+-- Insert sample data into Sales table
+INSERT INTO Sales (sale_id, product_id, quantity_sold, sale_date, total_price) VALUES
+(1, 101, 5, '2024-01-01', 2500.00),
+(2, 102, 3, '2024-01-02', 900.00),
+(3, 103, 2, '2024-01-02', 60.00),
+(4, 104, 4, '2024-01-03', 80.00),
+(5, 105, 6, '2024-01-03', 90.00);
+
+select * from sales;
+
+
+drop table if exists Products;
+
+-- Create Products table
+CREATE TABLE Products (
+ product_id INT PRIMARY KEY,
+ product_name VARCHAR(100),
+ category VARCHAR(50),
+ unit_price DECIMAL(10, 2)
+);
+-- Insert sample data into Products table
+INSERT INTO Products (product_id, product_name, category, unit_price) VALUES
+(101, 'Laptop', 'Electronics', 500.00),
+(102, 'Smartphone', 'Electronics', 300.00),
+(103, 'Headphones', 'Electronics', 30.00),
+(104, 'Keyboard', 'Electronics', 20.00),
+(105, 'Mouse', 'Electronics', 15.00);
+
+select * from Products;
+
+-----------------------------------------------------------
+
+-- Q1. Categorize sales as "High", "Medium", or "Low" based on total price (e.g., > $200 is High, $100-
+-- $200 is Medium, < $100 is Low
+
+select sale_id,total_price, 
+case 
+	when total_price > 200 then 'high'
+	when total_price between 200 and 100 then 'medium'
+	else 'low'
+end as 'sales_category'
+from Sales;
+
+
+-- Q2. Identify sales where the quantity sold is greater than the average quantity sold.
+
+select sale_id,quantity_sold from Sales where quantity_sold > (select avg(quantity_sold) from Sales);
+
+
+-- Q3. Calculate the number of days between the current date and the sale date for each sale.
+select sale_id,product_id,sale_date,datediff(curdate() , sale_date) as days_from_sale from Sales;
+
